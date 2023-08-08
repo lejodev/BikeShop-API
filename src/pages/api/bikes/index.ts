@@ -2,15 +2,17 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { Bike } from '@/model/Bike'
 import { BikeService } from '@/services/BikeService';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const bikeService: BikeService = new BikeService();
 
     if (req.method === "GET") {
         try {
-            const bikes: Bike[] = bikeService.getAllBikes()
+            console.log("INSIDEEEEEEEEE")
+            const bikes: Bike[] = await bikeService.getAllBikes()
+            console.log(bikes)
             res.status(200).json(bikes)
         } catch (error) {
-            console.log("first", error)
+            console.log("first======================", error)
             res.status(500).send(error)
         }
     } else if (req.method === "POST") {

@@ -1,68 +1,72 @@
 import { Bike } from '../model/Bike'
+import { connectToMongoDB } from './mongodb/mongodb';
 
 export class BikeService {
-    private bikes: Bike[];
 
-    constructor() {
-        // Initialize an empty array to store bikes
-        this.bikes = [
-            { id: "wegwe", brand: "orbea", size: "L", model: "alma H10" },
-            { id: "asd", brand: "GIant", size: "S", model: "Marlin" },
-            { id: "oh5", brand: "orbea", size: "L", model: "H50" },
-            { id: "oh1", brand: "orbea", size: "L", model: "H10" },
-        ];
+    async getConnection() {
+        const db = await connectToMongoDB() // TODO Refactor later
+        return db.collection('BikeShop')
     }
 
     // Create a new bike
-    createBike(newBike: Bike): void {
-        this.bikes.push(newBike);
-        console.log(this.bikes)
+    async createBike(newBike: Bike) {
+        const collection = await this.getConnection()
+        collection.insertOne(newBike)
     }
 
     // Get all bikes
-    getAllBikes(): Bike[] | never {
-        return this.bikes;
-        // throw new Error(`The are not bikes on the database`)
+    async getAllBikes(): Promise<Bike[]> {
+        const bikesCollection = await this.getConnection()
+        const bikeDocuments = await bikesCollection.find().toArray()
 
+        const bikes: Bike[] = bikeDocuments.map((doc) => ({
+            id: doc.id,
+            brand: doc.brand,
+            size: doc.size,
+            model: doc.model,
+        }));
+        return bikes;
     }
 
-    // Get a bike by its ID
-    getBikeById(id: string): Bike | undefined {
-        const bike = this.bikes.find(bike => bike.id === id);
-
-        // ======== Handle from route ======== 
-        // if (!bike) {
-        //     throw new Error(`Bike with id ${id} doesn't exists`)
-        // }
-        return bike
+    async deleteBikeById(id: string): Promise<boolean> {
+        const bikesCollection = await this.getConnection()
+        const result = await bikesCollection.deleteOne({ "id": `${id}` })
+        return result.deletedCount === 1
     }
 
-    // Update a bike by its ID
-    updateBikeById(id: string, updatedBike: Bike): boolean {
-        console.log(id)
-        const bikeIndex = this.bikes.findIndex(bike => bike.id === id);
+    //     // Get a bike by its ID
+    //     getBikeById(id: string): Bike | undefined {
+    //         // const bike = bikes.find(bike => bike.id === id);
 
-        if (bikeIndex !== -1) {
-            const tempBike = { ...updatedBike }
-            console.log("temp", tempBike)
-            this.bikes[bikeIndex] = { ...updatedBike }; // Preserve the ID
-            console.log(this.bikes)
-            return true;
-        }
+    //         // ======== Handle from route ======== 
+    //         // if (!bike) {
+    //         //     throw new Error(`Bike with id ${id} doesn't exists`)
+    //         // }
+    //         // return bike
+    //     }
 
-        return false;
-    }
+    //     // Update a bike by its ID
+    //     updateBikeById(id: string, updatedBike: Bike): boolean {
+    //         console.log(id)
+    //         const bikeIndex = bikes.findIndex(bike => bike.id === id);
+
+    //         if (bikeIndex !== -1) {
+    //             const tempBike = { ...updatedBike }
+    //             console.log("temp", tempBike)
+    //             bikes[bikeIndex] = { ...updatedBike }; // Preserve the ID
+    //             console.log(bikes)
+    //             return true;
+    //         }
+
+    //         return false;
+    //     }
 
     // Delete a bike by its ID
-    deleteBikeById(id: string): boolean {
-        const initialLength = this.bikes.length
-        this.bikes = this.bikes.filter(bike => bike.id !== id)
-        return this.bikes.length !== initialLength
-    }
+
 }
 
-// Usage
-const bikeService = new BikeService();
+// // Usage
+// const bikeService = new BikeService();
 
 // // Create new bikes
 // bikeService.createBike({ id: "1", brand: "Giant", size: "M", model: "Defy" });
