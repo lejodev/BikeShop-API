@@ -17,6 +17,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         const bike: Bike = req.body
         bikeService.createBike(bike)
         res.status(201).send(`Bike with id ${bike.id} was created successfully`) // Handle errors and "\r\n"
+        
     } else {
         res.status(403).send(`Method ${req.method} not allowed`);
     }

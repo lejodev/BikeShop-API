@@ -8,8 +8,8 @@ export class BikeService {
         this.bikes = [
             { id: "wegwe", brand: "orbea", size: "L", model: "alma H10" },
             { id: "asd", brand: "GIant", size: "S", model: "Marlin" },
-            { id: "123h50", brand: "orbea", size: "L", model: "H50" },
-            { id: "123h50", brand: "orbea", size: "L", model: "H50" },
+            { id: "oh5", brand: "orbea", size: "L", model: "H50" },
+            { id: "oh1", brand: "orbea", size: "L", model: "H10" },
         ];
     }
 
@@ -27,21 +27,26 @@ export class BikeService {
     }
 
     // Get a bike by its ID
-    getBikeById(id: string): Bike | never {
+    getBikeById(id: string): Bike | undefined {
         const bike = this.bikes.find(bike => bike.id === id);
 
-        if (!bike) {
-            throw new Error(`Bike with id ${id} doesn't exists`)
-        }
+        // ======== Handle from route ======== 
+        // if (!bike) {
+        //     throw new Error(`Bike with id ${id} doesn't exists`)
+        // }
         return bike
     }
 
     // Update a bike by its ID
     updateBikeById(id: string, updatedBike: Bike): boolean {
+        console.log(id)
         const bikeIndex = this.bikes.findIndex(bike => bike.id === id);
 
         if (bikeIndex !== -1) {
-            this.bikes[bikeIndex] = { ...updatedBike, id }; // Preserve the ID
+            const tempBike = { ...updatedBike }
+            console.log("temp", tempBike)
+            this.bikes[bikeIndex] = { ...updatedBike }; // Preserve the ID
+            console.log(this.bikes)
             return true;
         }
 
@@ -50,9 +55,9 @@ export class BikeService {
 
     // Delete a bike by its ID
     deleteBikeById(id: string): boolean {
-        const initialLength = this.bikes.length;
-        this.bikes = this.bikes.filter(bike => bike.id !== id);
-        return this.bikes.length !== initialLength;
+        const initialLength = this.bikes.length
+        this.bikes = this.bikes.filter(bike => bike.id !== id)
+        return this.bikes.length !== initialLength
     }
 }
 
