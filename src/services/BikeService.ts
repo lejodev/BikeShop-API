@@ -1,4 +1,4 @@
-import { Bike } from "../model/Bike";
+import { Bike } from '../model/Bike'
 
 export class BikeService {
     private bikes: Bike[];

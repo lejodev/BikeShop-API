@@ -1,4 +1,4 @@
-import { Bike } from "../model/Bike";
+import { Bike } from "./Bike";
 
 export type Cart = {
     id: string;

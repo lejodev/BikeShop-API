@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { Bike } from '@/app/model/Bike'
-import { BikeService } from '@/app/services/BikeService';
+import { Bike } from '@/model/Bike'
+import { BikeService } from '@/services/BikeService';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const bikeService: BikeService = new BikeService();
